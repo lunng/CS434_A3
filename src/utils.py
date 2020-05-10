@@ -6,6 +6,9 @@ sns.set()
 
 from sklearn.metrics import f1_score
 
+
+
+
 def load_data(rootdir='./'):
 	x_train = np.loadtxt(rootdir+'x_train.csv', delimiter=',').astype(int)
 	y_train = np.loadtxt(rootdir+'y_train.csv', delimiter=',').astype(int)
@@ -15,24 +18,28 @@ def load_data(rootdir='./'):
 	y_test[y_test == -1] = 0
 	return x_train, y_train, x_test, y_test
 
+
 def load_dictionary(rootdir='./'):
 	county_dict = pd.read_csv(rootdir+'county_facts_dictionary.csv')
 	return county_dict
+
 
 def dictionary_info(county_dict):
 	for i in range(county_dict.shape[0]):
 		print('Feature: {} - Description: {}'.format(i, county_dict['description'].iloc[i]))
 
+
 def dictionary_info_single(county_dict, i):
 	print('Feature: {} - Description: {}'.format(i, county_dict['description'].iloc[i]))
+
 
 def accuracy_score(preds, y):
 	accuracy = (preds == y).sum()/len(y)
 	return accuracy
 
+
 def f1(y, yhat):
 	return f1_score(y, yhat)
-
 
 
 ###########################################################################
