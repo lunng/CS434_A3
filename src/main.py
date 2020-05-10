@@ -44,7 +44,7 @@ def decision_tree_testing(x_train, y_train, x_test, y_test):
 
 def ada_boost_testing(x_train, y_train, x_test, y_test):
     print('AdaBoost\n\n')
-    weak = AdaBoostClassifier(n_trees=3)
+    weak = AdaBoostClassifier(n_trees=1)
     weak.fit(x_train, y_train)
     preds_train = weak.predict(x_train)
     preds_test = weak.predict(x_test)

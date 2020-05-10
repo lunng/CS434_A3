@@ -299,11 +299,14 @@ class AdaBoostClassifier:
         for i in range(self.n_trees):
             ab = DecisionTreeAdaBoost(self.max_features, d)
             ab.fit(X, y)
-            err = ab.accuracy_score(X, y)
-            a_t = .5 * math.log((1 - err) / err)
+            preds = ab.predict(X)
 
-            correct_idx = np.where(ab.predict(X) == y)
-            incorrect_idx = np.where(ab.predict(X) != y)
+            correct_idx = np.where(preds == y)
+            incorrect_idx = np.where(preds != y)
+
+            err = d[incorrect_idx].sum()
+
+            a_t = .5 * math.log((1 - err) / err)
 
             d[correct_idx] *= math.e ** a_t
             d[incorrect_idx] *= math.e ** -a_t
@@ -338,26 +341,26 @@ class DecisionTreeAdaBoost(DecisionTreeClassifier):
             ########################################
 
             # get weights
-            weightL = len(left_y) / len(y)
-            weightR = len(right_y) / len(y)
+            weightL = left_w.sum() / d.sum()
+            weightR = right_w.sum() / d.sum()
 
             # calculate impurities
             positiveY_idx = np.where(y == 1)
-            positiveY = d[positiveY_idx].sum()
+            positiveY = d[positiveY_idx].sum() / d.sum()
             negativeY_idx = np.where(y == -1)
-            negativeY = d[negativeY_idx].sum()
+            negativeY = d[negativeY_idx].sum() / d.sum()
             impurityY = 1 - (positiveY ** 2) - (negativeY ** 2)
 
             positiveL_idx = np.where(left_y == 1)
-            positiveL = left_w[positiveL_idx].sum()
+            positiveL = left_w[positiveL_idx].sum() / left_w.sum()
             negativeL_idx = np.where(left_y == -1)
-            negativeL = left_w[negativeL_idx].sum()
+            negativeL = left_w[negativeL_idx].sum() / left_w.sum()
             impurityL = 1 - (positiveL ** 2) - (negativeL ** 2)
 
             positiveR_idx = np.where(right_y == 1)
-            positiveR = right_w[positiveR_idx].sum()
+            positiveR = right_w[positiveR_idx].sum() / right_w.sum()
             negativeR_idx = np.where(right_y == -1)
-            negativeR = right_w[negativeR_idx].sum()
+            negativeR = right_w[negativeR_idx].sum() / right_w.sum()
             impurityR = 1 - (positiveR ** 2) - (negativeR ** 2)
 
             # calculate the gain from the impurities and weights
