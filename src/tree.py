@@ -291,16 +291,16 @@ class AdaBoostClassifier:
     def __init__(self, n_trees, max_features=None):
         self.n_trees = n_trees
         self.max_features = max_features
-        self.ab = None
+        self.classifiers = []
 
     def fit(self, X, y):
         ab = None
-        d = np.full((len(y),), 1/len(y))
-        for i in range(self.n_trees):
+        d = np.full(len(y), 1/len(y))
+        for _ in range(self.n_trees):
             ab = DecisionTreeAdaBoost(self.max_features, d)
             ab.fit(X, y)
-            preds = ab.predict(X)
 
+            preds = ab.predict(X)
             correct_idx = np.where(preds == y)
             incorrect_idx = np.where(preds != y)
 
@@ -308,14 +308,26 @@ class AdaBoostClassifier:
 
             a_t = .5 * math.log((1 - err) / err)
 
-            d[correct_idx] *= math.e ** a_t
-            d[incorrect_idx] *= math.e ** -a_t
-            d[:] /= d.sum()
-        self.ab = ab
+            d[correct_idx] *= (math.e ** -a_t)
+            d[incorrect_idx] *= (math.e ** a_t)
+            d /= d.sum()
+
+            classifier = {'a_t': a_t, 'tree': ab}
+
+            self.classifiers.append(classifier)
 
     def predict(self, X):
-        return self.ab.predict(X)
+        preds = None
+        for classifier in self.classifiers:
+            temp_preds = np.asarray(classifier['tree'].predict(X))
+            if preds is None:
+                preds = np.zeros(len(temp_preds))
+            temp_preds = (temp_preds * classifier['a_t'])
+            preds += temp_preds
 
+        preds[preds < 0] = -1
+        preds[preds > 0] = 1
+        return preds
 
 class DecisionTreeAdaBoost(DecisionTreeClassifier):
     def __init__(self, max_features=None, d=None):

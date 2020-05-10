@@ -44,16 +44,21 @@ def decision_tree_testing(x_train, y_train, x_test, y_test):
 
 def ada_boost_testing(x_train, y_train, x_test, y_test):
     print('AdaBoost\n\n')
-    weak = AdaBoostClassifier(n_trees=1)
-    weak.fit(x_train, y_train)
-    preds_train = weak.predict(x_train)
-    preds_test = weak.predict(x_test)
-    train_accuracy = accuracy_score(preds_train, y_train)
-    test_accuracy = accuracy_score(preds_test, y_test)
-    print('Train {}'.format(train_accuracy))
-    print('Test {}'.format(test_accuracy))
-    preds = weak.predict(x_test)
-    print('F1 Test {}'.format(f1(y_test, preds)))
+    graphTrain = []
+    graphTest = []
+    graphF1 = []
+    for i in range(10,100,10):
+        weak = AdaBoostClassifier(n_trees=i)
+        weak.fit(x_train, y_train)
+        preds_train = weak.predict(x_train)
+        preds_test = weak.predict(x_test)
+        train_accuracy = accuracy_score(preds_train, y_train)
+        test_accuracy = accuracy_score(preds_test, y_test)
+        print('Trees {}'.format(i))
+        print('Train {}'.format(train_accuracy))
+        print('Test {}'.format(test_accuracy))
+        preds = weak.predict(x_test)
+        print('F1 Test {}'.format(f1(y_test, preds)))
 
 
 def decision_tree_various_depth(x_train, y_train, x_test, y_test):
