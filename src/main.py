@@ -318,14 +318,14 @@ if __name__ == '__main__':
     if args.county_dict == 1:
         county_info(args)
 
-    if args.decision_tree == 10:
+    if args.decision_tree == 1:
         decision_tree_testing(x_train, y_train, x_test, y_test)
         print('\n')
         mvpFeature = decision_tree_various_depth(x_train, y_train, x_test, y_test)
         county_dict = load_dictionary(args.root_dir)
         dictionary_info_single(county_dict, mvpFeature)
 
-    if args.random_forest == 10:
+    if args.random_forest == 1:
         print("== Running random forest testing.\n")
         random_forest_testing(x_train, y_train, x_test, y_test)
         best_trees = random_forest_various_trees(x_train, y_train, x_test, y_test)
