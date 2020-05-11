@@ -1,6 +1,6 @@
 # CS434_A3
 
-To run the code, first navigate to the src directory.  You will need to install the following
+Our report is named Report.pdf. To run the code, first navigate to the src directory.  You will need to install the following
 dependencies for python3 if you do not already have them.
 
 pandas,
