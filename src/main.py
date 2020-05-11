@@ -47,18 +47,39 @@ def ada_boost_testing(x_train, y_train, x_test, y_test):
     graphTrain = []
     graphTest = []
     graphF1 = []
-    for i in range(10,100,10):
+    for i in range(10,200,10):
         weak = AdaBoostClassifier(n_trees=i)
         weak.fit(x_train, y_train)
         preds_train = weak.predict(x_train)
         preds_test = weak.predict(x_test)
         train_accuracy = accuracy_score(preds_train, y_train)
         test_accuracy = accuracy_score(preds_test, y_test)
-        print('Trees {}'.format(i))
+        print('L {}'.format(i))
         print('Train {}'.format(train_accuracy))
         print('Test {}'.format(test_accuracy))
         preds = weak.predict(x_test)
         print('F1 Test {}'.format(f1(y_test, preds)))
+
+        graphTrain.append(train_accuracy)
+        graphTest.append(test_accuracy)
+        graphF1.append(f1(y_test, preds))
+
+    table = pd.DataFrame({
+        "L Parameter": [item for item in range(10, 200, 10)],
+        "Train Accuracy": graphTrain,
+        "Test Accuracy": graphTest,
+        "F1 Accuracy": graphF1
+    })
+    print(table)
+
+    plt.xlabel('L Parameter')
+    plt.ylabel('Performance')
+    plt.title('Accuracy & F1 Score vs L')
+    plt.plot('L Parameter', 'Train Accuracy', data=table, color='blue')
+    plt.plot('L Parameter', 'Test Accuracy', data=table, color='green')
+    plt.plot('L Parameter', 'F1 Accuracy', data=table, color='red')
+    plt.legend()
+    plt.savefig('q3.png')
 
 
 def decision_tree_various_depth(x_train, y_train, x_test, y_test):
@@ -297,14 +318,14 @@ if __name__ == '__main__':
     if args.county_dict == 1:
         county_info(args)
 
-    if args.decision_tree == 1:
+    if args.decision_tree == 10:
         decision_tree_testing(x_train, y_train, x_test, y_test)
         print('\n')
         mvpFeature = decision_tree_various_depth(x_train, y_train, x_test, y_test)
         county_dict = load_dictionary(args.root_dir)
         dictionary_info_single(county_dict, mvpFeature)
 
-    if args.random_forest == 1:
+    if args.random_forest == 10:
         print("== Running random forest testing.\n")
         random_forest_testing(x_train, y_train, x_test, y_test)
         best_trees = random_forest_various_trees(x_train, y_train, x_test, y_test)
